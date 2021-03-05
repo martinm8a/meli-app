@@ -1,78 +1,188 @@
-import React, {Fragment, useEffect, useState} from "react";
+import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios"
 import ProductCard from "./ProductCard.js";
 
-//PENDIENTES
-// Poder ordenar los productos en base a su precio, de forma ascendete o descendente.
-// Poder filtrar por condicion.
-// Poder páginar los resultados de a 30 productos por página.
+//>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
 
-const Catalogo = (props)=>{
-
-    const [products, setProducts] = useState({
-        productos: [],
-        newProductos: [],
-        usedProductos: [],
-        lowestAll: [],
-        lowestNew: [],
-        lowestUsed: [],
-        highestNew: [],
-        highestAll: [],
-        highestUsed: [],
-      });
-    const cache = {};
-
-    const onSubmitForm = async e => {
+const Catalogo = (props) => {
+ 
+    var [products, setProducts] = useState([]);
+    var [orderBy, setOrderBy] = useState("")
+    var [estadoProd, setEstadoProd] = useState("")
+    const busqueda = props.palabra;
+    const onSubmitForm = async (e) => {
         e.preventDefault();
         try {
-            console.log("soy el cache solito wiii", cache)
-            const busqueda = props.palabra;
-                console.log("soy la busqueda", busqueda)
-                const response = await axios.get(`http://localhost:3001/api/search?q=${busqueda}`)
-                cache[busqueda] = response.data.results
+            const response = await axios.get(`http://localhost:5001/api/search?q=${busqueda}`)
+            const jsonData = response.data
+            console.log(Array.isArray(jsonData));
 
-                const recursos = response.data;
-                setProducts({
-                    ...products,
-                    productos: recursos,
-                  });
-                // setProducts(response.data.results)  
-            
-            
-            
+            //const recursos = response.data.results;
+            await setProducts(jsonData)
+
         } catch (err) {
             console.error("este es el error", err.message)
         }
     }
 
 
-    console.log("soy el props del catalogo", props.palabra) 
+    console.log("soy el props del catalogo", props.palabra)
+{    
+//     var sortF = () => {    
+//     }
 
-    return(
+//     orderBy = 'priceASC'
+
+//    var prod = products.sort(sortF)
+
+//    const ordenMen = ()=>{
+//     setOrderBy ('priceASC')
+// 
+}
+
+//pasando como parametros de setProducts
+{
+// const ordenMen = products.sort((a, b) => {
+//     if (a.price < b.price) {
+//         return -1
+//     } 
+//     if (a.price > b.price) {
+//         return 1
+//     }
+//     return 0
+// })
+
+// const ordenMay = products.sort((a, b) => {
+//         if (a.price < b.price) {
+//             return 1
+//         } 
+//         if (a.price > b.price) {
+//             return -1
+//         }
+//         return 0
+//     })
+}
+
+var sortF = () => {}
+    
+    switch (orderBy) {
+        case 'priceASC':
+            sortF = (a, b) => {
+                if (a.price < b.price) {
+                    return -1
+                }
+                if (a.price > b.price) {
+                    return 1
+                }
+                return 0
+            }
+            break;
+        case 'priceDSC':
+            sortF = (a, b) => {
+                if (a.price < b.price) {
+                    return 1
+                }
+                if (a.price > b.price) {
+                    return -1
+                }
+                return 0
+            }
+            break;
+        default:
+            break;
+    }
+{
+    // function esNuevo(products) {
+    //     return products.condition ==="new"
+    //   }
+    //   function esUsado(products) {
+    //     return products.condition ==="used"
+    //   }
+
+    // var condicion = (condicion, esNuevo, esUsado) => {
+    //     if (condicion === "new"){
+    //         return esNuevo
+    //     }
+    // }
+
+    }
+   
+    // const esNUevo = (products)=>{
+    //     return "condition" === "new"
+    // }
+
+    // const esUsado= (products)=>{
+    //     return "condition" === "used"
+    // }
+
+    // var condicion = ()=>{}  
+    // switch (estadoProd) {
+    //     case "new":
+    //         condicion = esNUevo
+                
+    //         break;
+    //     case "used":
+    //         condicion =  esUsado
+    //         break;
+    
+    //     default:
+    //         break;
+    // }
+    //.filter("condition" === "new")
+
+    return (
         <Fragment>
+            {" "}
             <div>COmoponente catalogo</div>
             <h1>{props.mascota}</h1>
-            <form className=""  onSubmit={onSubmitForm}>
+            <form className="" onSubmit={onSubmitForm}>
                 <button type="submit">tocame bb</button>
             </form>
-            {products && products.slice(0, 30).map((item) => {
-              return (
-                <ProductCard
-                  title={item.title}
-                  price={item.price}
-                  currency_id={item.currency_id}
-                  available_quantity={item.available_quantity}
-                  thumbnail= {item.thumbnail}
-                  condition={item.condition}
-                />
-              );
-            })}
+            
+                     <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                        Orden por Precio 
+                        <hr/>
+                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceASC')}}>
+                            <input type="radio" name="options" id="option2" autocomplete="off"/> M- a M+
+                        </label>
+                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceDSC')}}  >
+                            <input type="radio" name="options" id="option3" autocomplete="off"/> M+ a M-
+                        </label> 
+                        
+                    </div>
+                    <div className="btn-group btn-group-toggle" data-toggle="buttons">
+                        Orden por Condicion
+                        <hr/>
+                        <label className="btn btn-secondary" onClick={() =>{setEstadoProd ("new")}}>
+                            <input type="radio" name="options" id="option2" autocomplete="off"/> nuevo
+                        </label>
+                        <label className="btn btn-secondary" onClick={() =>{setEstadoProd ("used")}}  >
+                            <input type="radio" name="options" id="option3" autocomplete="off"/> usado
+                        </label> 
+                        
+                    </div>
+                    
+            <div>
+                {products.sort(sortF).map((item) => {
+                    return (
+                        <ProductCard
+                            key={item.id}
+
+                            title={item.title}
+                            price={item.price}
+                            currency_id={item.currency_id}
+                            available_quantity={item.available_quantity}
+                            thumbnail={item.thumbnail}
+                            condition={item.condition}
+                        />
+                    );
+                })}
+
+            </div>
         </Fragment>
     )
 
 }
 
 export default Catalogo
-
-// 
