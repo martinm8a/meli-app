@@ -7,10 +7,13 @@ import ProductCard from "./ProductCard.js";
 
 const Catalogo = (props) => {
  
+//>>>>>>>>>>>>>>>> Estados
     var [products, setProducts] = useState([]);
     var [orderBy, setOrderBy] = useState("")
-    var [estadoProd, setEstadoProd] = useState("")
+    var [estadoProd, setEstadoProd] = useState("new")
     const busqueda = props.palabra;
+
+ //>>>>>>>>>>>>>>>> onSubmit   
     const onSubmitForm = async (e) => {
         e.preventDefault();
         try {
@@ -18,7 +21,6 @@ const Catalogo = (props) => {
             const jsonData = response.data
             console.log(Array.isArray(jsonData));
 
-            //const recursos = response.data.results;
             await setProducts(jsonData)
 
         } catch (err) {
@@ -63,7 +65,7 @@ const Catalogo = (props) => {
 //         return 0
 //     })
 }
-
+//>>>>>>>>>>>>>>>>>> Ordenamiento por precios
 var sortF = () => {}
     
     switch (orderBy) {
@@ -107,29 +109,26 @@ var sortF = () => {}
     // }
 
     }
-   
-    // const esNUevo = (products)=>{
-    //     return "condition" === "new"
-    // }
+   //>>>>>>>>>>>>>>>>>>>>Condicion del producto
+    const esNuevo =()=> item=>{return item.condition === "new"}
 
-    // const esUsado= (products)=>{
-    //     return "condition" === "used"
-    // }
+    const esUsado= ()=> item=>{return item.condition === "used"}
 
+{
     // var condicion = ()=>{}  
     // switch (estadoProd) {
     //     case "new":
-    //         condicion = esNUevo
+    //         var condicion = ()=> {item=>{return item.condition === "new"}}
                 
     //         break;
     //     case "used":
-    //         condicion =  esUsado
+    //         function(){item=>{return item.condition === "used"}}
     //         break;
     
     //     default:
     //         break;
     // }
-    //.filter("condition" === "new")
+}
 
     return (
         <Fragment>
@@ -139,7 +138,6 @@ var sortF = () => {}
             <form className="" onSubmit={onSubmitForm}>
                 <button type="submit">tocame bb</button>
             </form>
-            
                      <div className="btn-group btn-group-toggle" data-toggle="buttons">
                         Orden por Precio 
                         <hr/>
@@ -164,7 +162,7 @@ var sortF = () => {}
                     </div>
                     
             <div>
-                {products.sort(sortF).map((item) => {
+                {products.sort(sortF).filter(estadoProd === "new" ? esNuevo() : esUsado()).map((item) => {
                     return (
                         <ProductCard
                             key={item.id}
@@ -178,11 +176,9 @@ var sortF = () => {}
                         />
                     );
                 })}
-
             </div>
         </Fragment>
     )
-
 }
 
 export default Catalogo
