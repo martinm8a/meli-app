@@ -1,6 +1,8 @@
 import React, { Fragment, useEffect, useState } from "react";
 import axios from "axios"
 import ProductCard from "./ProductCard.js";
+import ReactPaginate from 'react-paginate';
+import styles from './Catalogo.css'
 
 //>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 
@@ -8,9 +10,17 @@ import ProductCard from "./ProductCard.js";
 const Catalogo = (props) => {
  
 //>>>>>>>>>>>>>>>> Estados
+    
+
     var [products, setProducts] = useState([]);
-    var [orderBy, setOrderBy] = useState("")
+    var [orderBy, setOrderBy] = useState("priceASC")
     var [estadoProd, setEstadoProd] = useState("new")
+
+//>>>>>>>>>>>>>>>> Estados de pagina
+    const [pageNumber, setPageNumber] = useState(0);
+    const productsPerPage = 30;
+    const pageVisited = pageNumber * productsPerPage;
+
     const busqueda = props.palabra;
 
  //>>>>>>>>>>>>>>>> onSubmit   
@@ -21,50 +31,18 @@ const Catalogo = (props) => {
             const jsonData = response.data
             console.log(Array.isArray(jsonData));
 
-            await setProducts(jsonData)
+             setProducts(jsonData)
 
         } catch (err) {
             console.error("este es el error", err.message)
         }
     }
+  
+    // useEffect(()=>{
+    //     onSubmitForm()
+    // }, []);
+    
 
-
-    console.log("soy el props del catalogo", props.palabra)
-{    
-//     var sortF = () => {    
-//     }
-
-//     orderBy = 'priceASC'
-
-//    var prod = products.sort(sortF)
-
-//    const ordenMen = ()=>{
-//     setOrderBy ('priceASC')
-// 
-}
-
-//pasando como parametros de setProducts
-{
-// const ordenMen = products.sort((a, b) => {
-//     if (a.price < b.price) {
-//         return -1
-//     } 
-//     if (a.price > b.price) {
-//         return 1
-//     }
-//     return 0
-// })
-
-// const ordenMay = products.sort((a, b) => {
-//         if (a.price < b.price) {
-//             return 1
-//         } 
-//         if (a.price > b.price) {
-//             return -1
-//         }
-//         return 0
-//     })
-}
 //>>>>>>>>>>>>>>>>>> Ordenamiento por precios
 var sortF = () => {}
     
@@ -94,49 +72,35 @@ var sortF = () => {}
         default:
             break;
     }
-{
-    // function esNuevo(products) {
-    //     return products.condition ==="new"
-    //   }
-    //   function esUsado(products) {
-    //     return products.condition ==="used"
-    //   }
 
-    // var condicion = (condicion, esNuevo, esUsado) => {
-    //     if (condicion === "new"){
-    //         return esNuevo
-    //     }
-    // }
-
-    }
    //>>>>>>>>>>>>>>>>>>>>Condicion del producto
     const esNuevo =()=> item=>{return item.condition === "new"}
 
     const esUsado= ()=> item=>{return item.condition === "used"}
 
-{
-    // var condicion = ()=>{}  
-    // switch (estadoProd) {
-    //     case "new":
-    //         var condicion = ()=> {item=>{return item.condition === "new"}}
-                
-    //         break;
-    //     case "used":
-    //         function(){item=>{return item.condition === "used"}}
-    //         break;
-    
-    //     default:
-    //         break;
-    // }
-}
+
+    //>>>>>>>>>>>>>>>>>>>> Paginacion
+
+        const pageCount = Math.ceil(products.length/ productsPerPage)
+
+        const changePage = ({selected}) => {
+        setPageNumber(selected)
+        }
+
+    //>>>>>>>>>>>>>>>>>>>>> Filtros
+
+        const newProducts = products.slice(pageVisited, pageVisited + productsPerPage)
+
+        const displayProducts = newProducts.sort(sortF).filter(estadoProd === "new" ? esNuevo() : esUsado())
+      
 
     return (
         <Fragment>
             {" "}
-            <div>COmoponente catalogo</div>
-            <h1>{props.mascota}</h1>
+            <div>Componente catalogo</div>
+            
             <form className="" onSubmit={onSubmitForm}>
-                <button type="submit">tocame bb</button>
+                <button type="submit">Buscar</button>
             </form>
                      <div className="btn-group btn-group-toggle" data-toggle="buttons">
                         Orden por Precio 
@@ -162,21 +126,34 @@ var sortF = () => {}
                     </div>
                     
             <div>
-                {products.sort(sortF).filter(estadoProd === "new" ? esNuevo() : esUsado()).map((item) => {
+                { displayProducts.map((item) => {
                     return (
                         <ProductCard
                             key={item.id}
-
                             title={item.title}
                             price={item.price}
                             currency_id={item.currency_id}
                             available_quantity={item.available_quantity}
                             thumbnail={item.thumbnail}
                             condition={item.condition}
+                            
                         />
+                        
                     );
-                })}
+                })}    
             </div>
+                
+                <ReactPaginate
+                    previousLabel={"Previous"}
+                    nextLabel={"Next"}
+                    pageCount={pageCount}
+                    onPageChange={changePage}
+                    containerClassName={"paginationBttns"}
+                    previousLinkClassName={"previousBttn"}
+                    nextLinkClassName={"nextBttn"}
+                    disabledClassName={"paginationDisabled"}
+                    activeClassName={"paginationActive"}
+                />
         </Fragment>
     )
 }
