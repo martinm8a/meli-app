@@ -107,7 +107,7 @@ var sortF = () => {}
                         <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceASC')}}>
                             <input type="radio" name="options" id="option2" autocomplete="off"/> M- a M+
                         </label>
-                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceDSC')},}  >
+                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceDSC')}}  >
                             <input type="radio" name="options" id="option3" autocomplete="off"/> M+ a M-
                         </label> 
                         
