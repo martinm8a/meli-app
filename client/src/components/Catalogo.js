@@ -8,10 +8,11 @@ import styles from './Catalogo.css'
 
 
 const Catalogo = (props) => {
- 
+
+    const busqueda = props.palabra;
+
 //>>>>>>>>>>>>>>>> Estados
     
-
     var [products, setProducts] = useState([]);
     var [orderBy, setOrderBy] = useState("priceASC")
     var [estadoProd, setEstadoProd] = useState("new")
@@ -20,8 +21,6 @@ const Catalogo = (props) => {
     const [pageNumber, setPageNumber] = useState(0);
     const productsPerPage = 30;
     const pageVisited = pageNumber * productsPerPage;
-
-    const busqueda = props.palabra;
 
  //>>>>>>>>>>>>>>>> onSubmit   
     const onSubmitForm = async (e) => {
@@ -89,9 +88,9 @@ var sortF = () => {}
 
     //>>>>>>>>>>>>>>>>>>>>> Filtros
 
-        const newProducts = products.slice(pageVisited, pageVisited + productsPerPage)
+        const productosPaginados = products.slice(pageVisited, pageVisited + productsPerPage)
 
-        const displayProducts = newProducts.sort(sortF).filter(estadoProd === "new" ? esNuevo() : esUsado())
+        const mostrarProductos = productosPaginados.sort(sortF).filter(estadoProd === "new" ? esNuevo() : esUsado())
       
 
     return (
@@ -108,7 +107,7 @@ var sortF = () => {}
                         <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceASC')}}>
                             <input type="radio" name="options" id="option2" autocomplete="off"/> M- a M+
                         </label>
-                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceDSC')}}  >
+                        <label className="btn btn-secondary" onClick={() =>{setOrderBy ('priceDSC')},}  >
                             <input type="radio" name="options" id="option3" autocomplete="off"/> M+ a M-
                         </label> 
                         
@@ -126,7 +125,7 @@ var sortF = () => {}
                     </div>
                     
             <div>
-                { displayProducts.map((item) => {
+                { mostrarProductos.map((item) => {
                     return (
                         <ProductCard
                             key={item.id}
